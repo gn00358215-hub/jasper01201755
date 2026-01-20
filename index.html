@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新線導入計畫地緣環境評估</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c2410c; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9a3412; }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            height: 300px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 350px; }
+        }
+
+        .tab-active {
+            border-bottom: 3px solid #ea580c;
+            color: #ea580c;
+            font-weight: 700;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    <!-- Chosen Palette: Warm Neutrals (Background), Deep Saffron/Terracotta (Primary), Industrial Grey (Text), Forest Green (Success) -->
+    <!-- Application Structure Plan: Dashboard layout. Top Navigation for Regional Selection (North, South, East, West, Central). 
+         The dashboard is divided into three thematic columns: 
+         1. Cultural & Social Context (Left)
+         2. Infrastructure & Technical Feasibility (Center - Charts)
+         3. Supply Chain & Logistics (Right). 
+         Bottom section details the "Taiwan-India Connection" logic.
+         Interaction Flow: User selects a region -> JS updates State -> Charts re-render, Text content replaces dynamically.
+    -->
+    <!-- Visualization & Content Choices:
+         1. Feasibility Radar Chart: Compares multi-dimensional metrics (Cost, Infrastructure, Labor, etc.) for the selected region against the national average. Goal: Inform/Compare.
+         2. Logistics Bar Chart: Visualizes distances to key hubs and ports. Goal: Compare distances.
+         3. Dynamic Lists: For text-heavy data like religious customs, supply chain partners. Goal: Inform/Organize.
+         4. Process Steps: HTML/CSS styled timeline for the Taiwan Audit process. Goal: Change/Flow.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-orange-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md border-b-4 border-orange-600 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-orange-600 rounded flex items-center justify-center text-white font-bold text-xl">
+                    IN
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800">新線導入計畫地緣環境評估</h1>
+                    <p class="text-sm text-slate-500">電致變色後視鏡技術轉移與供應鏈佈局</p>
+                </div>
+            </div>
+            <div class="hidden md:block">
+                <span class="bg-orange-100 text-orange-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-orange-200">專案階段: 評估與規劃</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- Introduction Section -->
+        <section class="mb-8 bg-white rounded-lg shadow p-6 border-l-4 border-slate-500">
+            <h2 class="text-xl font-bold mb-2 text-slate-800">專案概述</h2>
+            <p class="text-slate-600 leading-relaxed">
+                本互動儀表板旨在分析將台灣電致變色後視鏡生產線複製至印度的可行性。
+                內容涵蓋五大地理區域（北、中、南、東、西印）的深度評估，包括地緣關係、社會風俗、無塵室廠房建置、當地供應鏈（螺絲、治具）、以及法規與物流挑戰。
+                請點擊下方按鈕選擇區域以查看詳細分析。
+            </p>
+        </section>
+
+        <!-- Region Selector (Navigation) -->
+        <nav class="mb-8 overflow-x-auto pb-2">
+            <div class="flex space-x-2 md:space-x-4 min-w-max" id="region-nav">
+                <!-- Generated by JS -->
+            </div>
+        </nav>
+
+        <!-- Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- COLUMN 1: Cultural & Social Context (Span 3) -->
+            <div class="lg:col-span-3 space-y-6">
+                <!-- Local Context Card -->
+                <div class="bg-white rounded-lg shadow overflow-hidden h-full flex flex-col">
+                    <div class="bg-slate-100 px-4 py-3 border-b border-slate-200">
+                        <h3 class="font-bold text-slate-700 flex items-center">
+                            <span class="mr-2">👳</span> 人文與社會分析
+                        </h3>
+                    </div>
+                    <div class="p-4 flex-grow">
+                        <p class="text-sm text-slate-500 mb-4 italic">此區域的社會結構、宗教習俗與勞工特性分析。</p>
+                        
+                        <div class="space-y-4" id="culture-content">
+                            <!-- Dynamic Content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMN 2: Infrastructure & Factory Setup (Span 6) -->
+            <div class="lg:col-span-6 space-y-6">
+                
+                <!-- Radar Chart Section -->
+                <div class="bg-white rounded-lg shadow p-4">
+                    <div class="mb-2">
+                        <h3 class="font-bold text-slate-700 text-lg">區域設廠綜合評分</h3>
+                        <p class="text-xs text-slate-500">比較該區域在土地成本、水電穩定度、供應鏈成熟度等面向的表現。</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="feasibilityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Factory Setup Details Tabs -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="flex border-b border-slate-200 overflow-x-auto">
+                        <button class="px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 focus:outline-none tab-btn" data-tab="infrastructure">廠房與無塵室</button>
+                        <button class="px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 focus:outline-none tab-btn" data-tab="utilities">水電與維修</button>
+                        <button class="px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 focus:outline-none tab-btn" data-tab="compliance">法規與廢棄物</button>
+                    </div>
+                    <div class="p-5 h-64 overflow-y-auto" id="factory-tab-content">
+                        <!-- Dynamic Content -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMN 3: Supply Chain & Logistics (Span 3) -->
+            <div class="lg:col-span-3 space-y-6">
+                <!-- Logistics Chart -->
+                <div class="bg-white rounded-lg shadow p-4">
+                    <h3 class="font-bold text-slate-700 mb-2 text-sm">物流距離分析 (公里/天)</h3>
+                    <div class="chart-container" style="height: 200px;">
+                        <canvas id="logisticsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Local Resources List -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="bg-slate-100 px-4 py-3 border-b border-slate-200">
+                        <h3 class="font-bold text-slate-700 text-sm">📦 在地供應鏈資源</h3>
+                    </div>
+                    <div class="p-4">
+                        <ul class="space-y-3 text-sm" id="supply-chain-list">
+                            <!-- Dynamic Content -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Taiwan-India Connection Section -->
+        <section class="mt-8 bg-white rounded-lg shadow p-6">
+            <div class="mb-4 border-b border-slate-200 pb-2">
+                <h2 class="text-lg font-bold text-slate-800">🇹🇼 台灣總部 - 🇮🇳 印度廠區 協作規劃</h2>
+                <p class="text-sm text-slate-600">針對稽核參訪、物料運輸與技術轉移的標準作業流程</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Step 1 -->
+                <div class="bg-orange-50 p-4 rounded border border-orange-100">
+                    <div class="text-orange-600 font-bold mb-2">1. 參訪與稽核 (Audit)</div>
+                    <p class="text-sm text-slate-700 mb-2">台灣工程師與管理層前往當地進行產線驗收與ISO稽核。</p>
+                    <ul class="text-xs text-slate-600 list-disc list-inside space-y-1">
+                        <li>簽證：需辦理商務簽證 (e-Business Visa)。</li>
+                        <li>交通：建議安排專車接送，避免大眾運輸。</li>
+                        <li>飲食：提供台灣廚師或簽約衛生飯店，預防腸胃不適。</li>
+                    </ul>
+                </div>
+                <!-- Step 2 -->
+                <div class="bg-blue-50 p-4 rounded border border-blue-100">
+                    <div class="text-blue-600 font-bold mb-2">2. 物料與耗材運輸</div>
+                    <p class="text-sm text-slate-700 mb-2">關鍵原物料(電致變色液)與精密儀器由台灣海/空運。</p>
+                    <ul class="text-xs text-slate-600 list-disc list-inside space-y-1">
+                        <li>海運：至孟買(Nhava Sheva)或欽奈(Chennai)港口，轉陸運需7-14天。</li>
+                        <li>關稅：需申請EPCG (出口促進資本財) 以減免機器進口稅。</li>
+                        <li>包裝：需強化防潮與防震處理。</li>
+                    </ul>
+                </div>
+                <!-- Step 3 -->
+                <div class="bg-green-50 p-4 rounded border border-green-100">
+                    <div class="text-green-600 font-bold mb-2">3. 技術支援與維修</div>
+                    <p class="text-sm text-slate-700 mb-2">在地化維修與遠端支援體系。</p>
+                    <ul class="text-xs text-slate-600 list-disc list-inside space-y-1">
+                        <li>儀器校驗：尋找當地NABL認證實驗室 (如SGS India, TUV)。</li>
+                        <li>備品：建立3個月安全庫存 (Safety Stock)。</li>
+                        <li>治具：當地精密加工廠 (Tool Room) 配合開發。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-300 py-6 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-sm">© 2026 印度新線導入計畫 | 內部機密文件</p>
+            <p class="text-xs mt-1 text-slate-500">本系統僅供內部評估使用，數據基於市場調查報告。</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Data Store
+        const appData = {
+            regions: {
+                "north": {
+                    id: "north",
+                    name: "北印 (NCR - Delhi/Gurgaon)",
+                    description: "印度最大的汽車製造聚落之一，擁有Maruti Suzuki等大廠。基礎設施相對完善，但氣候極端且冬季霧霾嚴重。",
+                    culture: {
+                        religion: "主要為印度教，穆斯林人口亦多。特定節日(如Diwali)工廠需停工。",
+                        social: "階級觀念較重，需謹慎處理管理層與基層員工關係。",
+                        language: "印地語 (Hindi) 為主，英語在管理層普及。"
+                    },
+                    stats: {
+                        landCost: 85, // Scale 1-100
+                        powerStability: 75,
+                        laborSkill: 80,
+                        logistics: 85,
+                        complianceEase: 60
+                    },
+                    logistics: {
+                        oemDistance: 20, // km (average to Maruti/Honda)
+                        portDistance: 1400, // km (to Mumbai/Mundra)
+                        shippingDays: 25 // days from Taiwan
+                    },
+                    factory: {
+                        infrastructure: "諾伊達(Noida)與古爾岡(Gurgaon)有現成工業區。土地昂貴，建議租賃廠房。",
+                        cleanroom: "氣候乾燥多塵，無塵室(Class 10k/100k)需加強空氣過濾系統(HEPA)壽命管理與雙層氣密門。",
+                        utilities: "電力供應尚可但夏季偶有跳電，必須配置工業級UPS與柴油發電機。水質硬度高，需RO水處理系統。",
+                        maintenance: "德里地區有大量精密機械代理商，維修支援最快。"
+                    },
+                    supplyChain: {
+                        screws: "Ludhiana (旁遮普邦) 為著名緊固件生產基地，採購容易。",
+                        jigs: "Gurgaon周邊有大量模具與治具加工廠 (Tool Rooms)，技術成熟。",
+                        waste: "需委託經中央污染控制委員會 (CPCB) 認證的廠商處理化學廢液。",
+                        calibration: "NPL (National Physical Laboratory) 位於新德里，校驗資源最豐富。"
+                    }
+                },
+                "south": {
+                    id: "south",
+                    name: "南印 (Chennai/Bangalore)",
+                    description: "被稱為印度的底特律，Hyundai, Ford, Daimler聚集地。教育程度高，社會風氣較保守穩定。",
+                    culture: {
+                        religion: "印度教為主，寺廟眾多，飲食偏素食與米食。種姓制度影響仍在。",
+                        social: "工會力量較強，需特別注意勞資關係管理。",
+                        language: "泰米爾語 (Tamil) / 卡納塔克語，英語普及率全印最高。"
+                    },
+                    stats: {
+                        landCost: 70,
+                        powerStability: 80,
+                        laborSkill: 90,
+                        logistics: 95,
+                        complianceEase: 75
+                    },
+                    logistics: {
+                        oemDistance: 30,
+                        portDistance: 20, // Chennai Port
+                        shippingDays: 14 // Direct shipping faster
+                    },
+                    factory: {
+                        infrastructure: "Sriperumbudur 工業區配套完善。氣候高溫潮濕。",
+                        cleanroom: "高濕度對電致變色製程有影響，除濕系統(Dehumidifier)為建廠重點，需全天候監控露點。",
+                        utilities: "欽奈曾有缺水危機，需自建大型蓄水池與雨水回收系統。電力相對穩定。",
+                        maintenance: "各國儀器原廠多在欽奈或班加羅爾設有總部。"
+                    },
+                    supplyChain: {
+                        screws: "Coimbatore 為南印工業重鎮，螺絲與五金零件供應充足。",
+                        jigs: "Ambattur 工業區有眾多中小企業可承接治具製作。",
+                        waste: "TNPCB (Tamil Nadu Pollution Control Board) 規範嚴格，需簽約合格回收商。",
+                        calibration: "ETDC (Electronics Test & Development Centre) 位於欽奈。"
+                    }
+                },
+                "west": {
+                    id: "west",
+                    name: "西印 (Pune/Gujarat)",
+                    description: "Tata Motors, Mahindra基地。商業氣息濃厚，古吉拉特邦對外資最友善，基礎建設最新。",
+                    culture: {
+                        religion: "耆那教與印度教影響，極度嚴格的素食主義者多，工廠餐廳需分區或全素。",
+                        social: "經商傳統濃厚，談判講究實利與效率。",
+                        language: "馬拉地語 / 古吉拉特語，英語通用。"
+                    },
+                    stats: {
+                        landCost: 65,
+                        powerStability: 90,
+                        laborSkill: 75,
+                        logistics: 90,
+                        complianceEase: 85
+                    },
+                    logistics: {
+                        oemDistance: 40,
+                        portDistance: 150, // Nhava Sheva / Mundra
+                        shippingDays: 18
+                    },
+                    factory: {
+                        infrastructure: "Sanand (Gujarat) 或 Chakan (Pune)。土地平坦，擴廠容易。",
+                        cleanroom: "環境較好，無塵室維護成本中等。需注意季風季節的防漏。",
+                        utilities: "古吉拉特邦擁有全印最穩定的電力供應 (Power Surplus)。工業用水供應穩定。",
+                        maintenance: "孟買與浦那間交通便利，技術支援無虞。"
+                    },
+                    supplyChain: {
+                        screws: "Rajkot 為著名的機械零組件中心，螺絲成本具競爭力。",
+                        jigs: "Pune 為汽車研發重鎮，高階治具開發能力強。",
+                        waste: "GPCB 執法嚴格，所有廢棄物流向皆需數位申報。",
+                        calibration: "IDEMI 位於孟買，提供儀器校正服務。"
+                    }
+                },
+                "east": {
+                    id: "east",
+                    name: "東印 (Kolkata/Jamshedpur)",
+                    description: "Tata Motors (Jamshedpur) 起源地。勞工成本最低，但基礎設施與物流較落後。",
+                    culture: {
+                        religion: "政治活動與宗教慶典頻繁 (如Durga Puja)，工會與政治罷工風險最高。",
+                        social: "勞工權利意識強烈，需投入更多資源於員工福利。",
+                        language: "孟加拉語，英語普及率中等。"
+                    },
+                    stats: {
+                        landCost: 40,
+                        powerStability: 50,
+                        laborSkill: 60,
+                        logistics: 40,
+                        complianceEase: 40
+                    },
+                    logistics: {
+                        oemDistance: 250,
+                        portDistance: 50, // Kolkata/Haldia
+                        shippingDays: 20
+                    },
+                    factory: {
+                        infrastructure: "工業區較為老舊，道路狹窄影響大型機台運輸。",
+                        cleanroom: "高溫多濕且多塵，維持Class 10k成本極高。",
+                        utilities: "電力不穩頻率高，需完全依賴自發電。水質差需深度處理。",
+                        maintenance: "高階儀器維修工程師通常需從其他區域調派，等待時間長。"
+                    },
+                    supplyChain: {
+                        screws: "Howrah 地區有傳統五金加工，但精密工業級螺絲可能需外購。",
+                        jigs: "Jamshedpur 依附Tata有不錯的重工能力，但精密電子治具較弱。",
+                        waste: "廢棄物處理設施較少，清運成本反而可能較高。",
+                        calibration: "NTH (National Test House) 位於加爾各答。"
+                    }
+                },
+                "central": {
+                    id: "central",
+                    name: "中印 (Indore/Pithampur)",
+                    description: "新興汽車聚落 (Eicher, Volvo)。位於印度中心，物流輻射全國，但本身供應鏈聚落較小。",
+                    culture: {
+                        religion: "相對平和，受北印文化影響大。",
+                        social: "生活步調較慢，員工穩定度高，流動率低。",
+                        language: "印地語為主。"
+                    },
+                    stats: {
+                        landCost: 50,
+                        powerStability: 70,
+                        laborSkill: 65,
+                        logistics: 75,
+                        complianceEase: 70
+                    },
+                    logistics: {
+                        oemDistance: 10, // Pithampur local
+                        portDistance: 800, // Landlocked
+                        shippingDays: 30
+                    },
+                    factory: {
+                        infrastructure: "Pithampur SEZ (特別經濟區)，土地取得容易且便宜。",
+                        cleanroom: "標準設置即可，無極端氣候影響。",
+                        utilities: "納爾默達河供水計畫改善了用水，電力尚可。",
+                        maintenance: "基本維修可由當地處理，高階需由孟買或德里支援。"
+                    },
+                    supplyChain: {
+                        screws: "基礎五金可當地採購，特殊規格需從北印或西印調貨。",
+                        jigs: "當地有Dewas工業區，具備基礎加工能力。",
+                        waste: "MPPCB (Madhya Pradesh Pollution Control Board) 規範。",
+                        calibration: "Indore 有多間NABL認證私人實驗室。"
+                    }
+                }
+            }
+        };
+
+        // State Management
+        let currentRegion = "north";
+        let feasibilityChartInstance = null;
+        let logisticsChartInstance = null;
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNav();
+            loadRegionData(currentRegion);
+        });
+
+        // Functions
+        function renderNav() {
+            const navContainer = document.getElementById('region-nav');
+            const regions = Object.keys(appData.regions);
+            
+            navContainer.innerHTML = regions.map(key => {
+                const region = appData.regions[key];
+                return `
+                    <button 
+                        onclick="switchRegion('${key}')"
+                        class="region-btn whitespace-nowrap px-6 py-2 rounded-full border transition-all duration-300 ${key === currentRegion ? 'bg-orange-600 text-white border-orange-600 shadow-lg' : 'bg-white text-slate-600 border-slate-200 hover:bg-orange-50'}"
+                        id="btn-${key}"
+                    >
+                        ${region.name}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function switchRegion(regionKey) {
+            currentRegion = regionKey;
+            
+            // Update Buttons
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.classList.remove('bg-orange-600', 'text-white', 'shadow-lg', 'border-orange-600');
+                btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+            });
+            const activeBtn = document.getElementById(`btn-${regionKey}`);
+            activeBtn.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
+            activeBtn.classList.add('bg-orange-600', 'text-white', 'shadow-lg', 'border-orange-600');
+
+            // Reload Data
+            loadRegionData(regionKey);
+        }
+
+        function loadRegionData(regionKey) {
+            const data = appData.regions[regionKey];
+
+            // 1. Update Text Content
+            updateCultureCard(data);
+            updateFactoryTabs(data);
+            updateSupplyChainList(data);
+
+            // 2. Update Charts
+            updateFeasibilityChart(data);
+            updateLogisticsChart(data);
+        }
+
+        function updateCultureCard(data) {
+            const container = document.getElementById('culture-content');
+            container.innerHTML = `
+                <div class="animate-fade-in">
+                    <h4 class="font-bold text-slate-700 text-sm mb-1">區域概況</h4>
+                    <p class="text-sm text-slate-600 mb-3 bg-slate-50 p-2 rounded border border-slate-100">${data.description}</p>
+                    
+                    <h4 class="font-bold text-orange-700 text-sm mb-1">宗教與風俗</h4>
+                    <p class="text-sm text-slate-600 mb-3">${data.culture.religion}</p>
+                    
+                    <h4 class="font-bold text-blue-700 text-sm mb-1">社會與管理</h4>
+                    <p class="text-sm text-slate-600 mb-3">${data.culture.social}</p>
+
+                     <h4 class="font-bold text-slate-700 text-sm mb-1">主要語言</h4>
+                    <p class="text-sm text-slate-600">${data.culture.language}</p>
+                </div>
+            `;
+        }
+
+        function updateFactoryTabs(data) {
+            // Default to first tab content but store data for switching
+            window.currentFactoryData = data.factory;
+            
+            // Re-render tab content based on currently active tab
+            const activeTab = document.querySelector('.tab-btn.tab-active') || document.querySelector('.tab-btn');
+            if(activeTab) {
+                renderTabContent(activeTab.dataset.tab);
+            }
+
+            // Bind Tab Clicks
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
+                    e.target.classList.add('tab-active');
+                    renderTabContent(e.target.dataset.tab);
+                };
+            });
+            
+            // Set initial active state if none
+            if (!document.querySelector('.tab-active')) {
+                document.querySelector('.tab-btn').classList.add('tab-active');
+            }
+        }
+
+        function renderTabContent(tabName) {
+            const container = document.getElementById('factory-tab-content');
+            const data = window.currentFactoryData;
+            let content = "";
+            let icon = "";
+
+            if (tabName === 'infrastructure') {
+                icon = "🏭";
+                content = `
+                    <div class="animate-fade-in">
+                        <p class="mb-4"><strong class="block text-slate-800">土地與廠房:</strong> ${data.infrastructure}</p>
+                        <p><strong class="block text-slate-800">無塵室配置:</strong> ${data.cleanroom}</p>
+                    </div>
+                `;
+            } else if (tabName === 'utilities') {
+                icon = "⚡";
+                content = `
+                    <div class="animate-fade-in">
+                        <p class="mb-4"><strong class="block text-slate-800">水電供給:</strong> ${data.utilities}</p>
+                        <p><strong class="block text-slate-800">設備維修:</strong> ${data.maintenance}</p>
+                    </div>
+                `;
+            } else if (tabName === 'compliance') {
+                icon = "⚖️";
+                content = `
+                    <div class="animate-fade-in">
+                        <p class="mb-4"><strong class="block text-slate-800">合法執照:</strong> 需申請工廠執照 (Factory License)、消防許可 (No Objection Certificate) 與當地市政營業登記。</p>
+                        <p><strong class="block text-slate-800">廢棄物清運:</strong> 依據當地PCB規範，所有有害廢棄物必須委託合格廠商，且GPS追蹤車輛。</p>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl">${icon}</span>
+                    <div class="text-sm text-slate-600 leading-relaxed w-full">
+                        ${content}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateSupplyChainList(data) {
+            const list = document.getElementById('supply-chain-list');
+            list.innerHTML = `
+                <li class="flex flex-col pb-2 border-b border-slate-100 animate-fade-in">
+                    <span class="font-semibold text-slate-700 text-xs uppercase tracking-wider">🔩 工業螺絲 / 緊固件</span>
+                    <span class="text-slate-600">${data.supplyChain.screws}</span>
+                </li>
+                <li class="flex flex-col py-2 border-b border-slate-100 animate-fade-in" style="animation-delay: 0.1s">
+                    <span class="font-semibold text-slate-700 text-xs uppercase tracking-wider">🛠️ 治具製作 (Jigs)</span>
+                    <span class="text-slate-600">${data.supplyChain.jigs}</span>
+                </li>
+                <li class="flex flex-col py-2 border-b border-slate-100 animate-fade-in" style="animation-delay: 0.2s">
+                    <span class="font-semibold text-slate-700 text-xs uppercase tracking-wider">♻️ 廢棄物處理</span>
+                    <span class="text-slate-600">${data.supplyChain.waste}</span>
+                </li>
+                <li class="flex flex-col pt-2 animate-fade-in" style="animation-delay: 0.3s">
+                    <span class="font-semibold text-slate-700 text-xs uppercase tracking-wider">📏 儀器校驗實驗室</span>
+                    <span class="text-slate-600">${data.supplyChain.calibration}</span>
+                </li>
+            `;
+        }
+
+        // --- Chart Functions ---
+
+        function updateFeasibilityChart(data) {
+            const ctx = document.getElementById('feasibilityChart').getContext('2d');
+            const scores = [
+                data.stats.landCost, 
+                data.stats.powerStability, 
+                data.stats.laborSkill, 
+                data.stats.logistics, 
+                data.stats.complianceEase
+            ];
+
+            if (feasibilityChartInstance) {
+                feasibilityChartInstance.data.datasets[0].data = scores;
+                feasibilityChartInstance.data.datasets[0].label = `${data.name} 評分`;
+                feasibilityChartInstance.update();
+            } else {
+                feasibilityChartInstance = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['土地成本競爭力', '水電穩定度', '勞工技術水平', '物流便利性', '法規/經商容易度'],
+                        datasets: [{
+                            label: `${data.name} 評分`,
+                            data: scores,
+                            fill: true,
+                            backgroundColor: 'rgba(234, 88, 12, 0.2)',
+                            borderColor: 'rgb(234, 88, 12)',
+                            pointBackgroundColor: 'rgb(234, 88, 12)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(234, 88, 12)'
+                        }, {
+                            label: '印度平均基準',
+                            data: [60, 65, 60, 65, 60],
+                            fill: true,
+                            backgroundColor: 'rgba(148, 163, 184, 0.1)',
+                            borderColor: 'rgb(148, 163, 184)',
+                            pointRadius: 0,
+                            borderDash: [5, 5]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                angleLines: { display: true },
+                                suggestedMin: 0,
+                                suggestedMax: 100,
+                                ticks: { display: false } // Hide numbers for cleaner look
+                            }
+                        },
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            tooltip: { 
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.raw + '/100';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function updateLogisticsChart(data) {
+            const ctx = document.getElementById('logisticsChart').getContext('2d');
+            
+            if (logisticsChartInstance) {
+                logisticsChartInstance.data.datasets[0].data = [
+                    data.logistics.oemDistance,
+                    data.logistics.portDistance,
+                    data.logistics.shippingDays * 10 // Scaling days to be visible with km
+                ];
+                logisticsChartInstance.update();
+            } else {
+                logisticsChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['距汽車大廠 (km)', '距主要港口 (km)', '台灣海運時間 (x10小時)'],
+                        datasets: [{
+                            label: '物流數據',
+                            data: [
+                                data.logistics.oemDistance,
+                                data.logistics.portDistance,
+                                data.logistics.shippingDays * 10
+                            ],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.7)',
+                                'rgba(16, 185, 129, 0.7)',
+                                'rgba(245, 158, 11, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgb(59, 130, 246)',
+                                'rgb(16, 185, 129)',
+                                'rgb(245, 158, 11)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y', // Horizontal bar chart
+                        scales: {
+                            x: { beginAtZero: true }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let val = context.raw;
+                                        if (context.dataIndex === 2) {
+                                            return `台灣運送時間: ${val / 10} 天`;
+                                        }
+                                        return `距離: ${val} km`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
